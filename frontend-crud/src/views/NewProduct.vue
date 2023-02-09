@@ -1,6 +1,5 @@
 <script setup>
-import router from "@/router";
-import axios from "axios";
+import { postData } from '@/services/functions'
 
 let name = ''
 let category = ''
@@ -21,28 +20,14 @@ const submit = () => {
     } else if (sale_price.trim() === '') {
         alert('Field Sale Price is Required')
     } else {
-        axios.post('http://localhost/api/products', {
+        let parameters = {
             name: name.trim(),
             category: category.trim(),
             quantity: quantity.trim(),
             buy_price: buy_price.trim(),
             sale_price: sale_price.trim()
-        }).then((response) => {
-            let status = response.data[0]['status'];
-            if (status === 'success') {
-                router.push('/')
-            } else {
-                let list = '';
-                let errors = response.data[1]['errors'];
-                Object.keys(errors).forEach(
-                    key => list += errors[key][0] + '.'
-                );
-                alert(list, 'error');
-            }
-        }).catch(error => {
-            console.log(error)
-        });
-
+        }
+        postData(parameters)
     }
 }
 

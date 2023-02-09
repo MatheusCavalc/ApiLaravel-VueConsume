@@ -1,5 +1,5 @@
 <script setup>
-import router from "@/router";
+import { putData } from '@/services/functions'
 import { useRoute } from 'vue-router';
 import axios from "axios";
 import { ref } from "vue";
@@ -36,28 +36,14 @@ const submit = () => {
     } else if (sale_price === '') {
         alert('Field Sale Price is Required')
     } else {
-        axios.put('http://localhost/api/products/' + id, {
+        let parameters = {
             name: name.value,
             category: category.value,
             quantity: quantity.value,
             buy_price: buy_price.value,
             sale_price: sale_price.value
-        }).then((response) => {
-            let status = response.data[0]['status'];
-            if (status === 'success') {
-                router.push('/')
-            } else {
-                let list = '';
-                let errors = response.data[1]['errors'];
-                Object.keys(errors).forEach(
-                    key => list += errors[key][0] + '.'
-                );
-                alert(list, 'error');
-            }
-        }).catch(error => {
-            console.log(error)
-        });
-
+        }
+        putData(id, parameters)
     }
 }
 
