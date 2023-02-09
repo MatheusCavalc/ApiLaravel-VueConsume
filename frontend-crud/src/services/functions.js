@@ -1,8 +1,10 @@
 import axios from 'axios'
 import router from "@/router";
 
+let url = process.env.VUE_APP_API_URL_BASE
+
 export function postData(parameters) {
-    axios.post('http://localhost/api/products', parameters).then((response) => {
+    axios.post(url, parameters).then((response) => {
         let status = response.data[0]['status'];
         if (status === 'success') {
             router.push('/')
@@ -20,7 +22,7 @@ export function postData(parameters) {
 }
 
 export function putData(id, parameters) {
-    axios.put('http://localhost/api/products/' + id, parameters).then((response) => {
+    axios.put(url + '/' + id, parameters).then((response) => {
         let status = response.data[0]['status'];
         if (status === 'success') {
             router.push('/')

@@ -9,9 +9,10 @@ import { ref } from 'vue';
 
 let products = ref('')
 let authUser = localStorage.getItem("bearerToken") === null ? false : true
+let url = process.env.VUE_APP_API_URL_BASE
 
 const getProducts = () => {
-  axios.get('http://localhost/api/products')
+  axios.get(url)
     .then((response) => {
       products.value = response.data
     })
@@ -22,7 +23,7 @@ const deleteProduct = (id) => {
     router.push('/login')
   }
 
-  axios.delete('http://localhost/api/products/' + id)
+  axios.delete(url + '/' + id)
     .then((response) => {
       getProducts()
     })
@@ -54,36 +55,36 @@ getProducts()
       </template>
 
       <template #tableRows>
-          <tr v-for="product in products" :key="product.id"
-            class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-            <TData type="first">
-              {{ product.name }}
-            </TData>
-            <TData type="normal">
-              {{ product.category }}
-            </TData>
-            <TData type="normal">
-              {{ product.quantity }}
-            </TData>
-            <TData type="normal">
-              {{ product.buy_price }}
-            </TData>
-            <TData type="normal">
-              {{ product.sale_price }}
-            </TData>
-            <TData type="normal">
-              <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                <router-link :to="{ path: 'edit-product/' + product.id }"
-                  class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
-                  <PencilIcon class="h-6 w-6" aria-hidden="true" />
-                </router-link>
-                <button @click="deleteProduct(product.id)"
-                  class="font-medium text-red-600 dark:text-red-500 hover:underline">
-                  <TrashIcon class="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-            </TData>
-          </tr>
+        <tr v-for="product in products" :key="product.id"
+          class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+          <TData type="first">
+            {{ product.name }}
+          </TData>
+          <TData type="normal">
+            {{ product.category }}
+          </TData>
+          <TData type="normal">
+            {{ product.quantity }}
+          </TData>
+          <TData type="normal">
+            {{ product.buy_price }}
+          </TData>
+          <TData type="normal">
+            {{ product.sale_price }}
+          </TData>
+          <TData type="normal">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <router-link :to="{ path: 'edit-product/' + product.id }"
+                class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
+                <PencilIcon class="h-6 w-6" aria-hidden="true" />
+              </router-link>
+              <button @click="deleteProduct(product.id)"
+                class="font-medium text-red-600 dark:text-red-500 hover:underline">
+                <TrashIcon class="h-6 w-6" aria-hidden="true" />
+              </button>
+            </div>
+          </TData>
+        </tr>
       </template>
     </Table>
   </div>
