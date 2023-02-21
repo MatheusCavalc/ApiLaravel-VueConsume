@@ -8,13 +8,14 @@ export function postData(parameters) {
         let status = response.data[0]['status'];
         if (status === 'success') {
             router.push('/')
-        } else {
+        } else if (status === 'error') {
             let list = '';
             let errors = response.data[1]['errors'];
             Object.keys(errors).forEach(
                 key => list += errors[key][0] + '.'
             );
-            alert(list, 'error');
+            console.log(list)
+            //alert(list, 'error');
         }
     }).catch(error => {
         console.log(error)

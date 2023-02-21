@@ -38,7 +38,7 @@ const submit = () => {
         New Product
     </p>
 
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 my-8">
         <form v-on:submit="submit">
             <div class="relative z-0 w-full mb-6 group">
                 <input type="text" v-model="name" id="floating_email"

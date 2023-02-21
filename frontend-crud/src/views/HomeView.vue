@@ -1,4 +1,5 @@
 <script setup>
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Table from '@/components/Table.vue'
 import THead from '@/components/THead.vue'
 import TData from '@/components/TData.vue'
@@ -8,13 +9,16 @@ import axios from 'axios';
 import { ref } from 'vue';
 
 let products = ref('')
+let loadingPage = ref('')
 let authUser = localStorage.getItem("bearerToken") === null ? false : true
 let url = process.env.VUE_APP_API_URL_BASE
 
+loadingPage.value = true
 const getProducts = () => {
   axios.get(url)
     .then((response) => {
       products.value = response.data
+      loadingPage.value = false
     })
 }
 
@@ -34,58 +38,65 @@ getProducts()
 
 <template>
   <div class="home">
-    <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-6">
-      Products
-    </p>
 
-    <template v-if="products.value == []">
-      <p class="text-very-dark mb-4 font-bold text-2xl lg:text-2xl ml-8 mt-10">
-        No Products
-      </p>
+    <template v-if="loadingPage">
+      <LoadingSpinner />
     </template>
 
-    <Table>
-      <template #headColumns>
-        <THead label="Product Name" />
-        <THead label="Category" />
-        <THead label="Quantity" />
-        <THead label="Buy Price" />
-        <THead label="Sale Price" />
-        <THead label="Action" />
+    <template v-else>
+      <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-6">
+        Products
+      </p>
+
+      <template v-if="products.value == []">
+        <p class="text-very-dark mb-4 font-bold text-2xl lg:text-2xl ml-8 mt-10">
+          No Products
+        </p>
       </template>
 
-      <template #tableRows>
-        <tr v-for="product in products" :key="product.id"
-          class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-          <TData type="first">
-            {{ product.name }}
-          </TData>
-          <TData type="normal">
-            {{ product.category }}
-          </TData>
-          <TData type="normal">
-            {{ product.quantity }}
-          </TData>
-          <TData type="normal">
-            {{ product.buy_price }}
-          </TData>
-          <TData type="normal">
-            {{ product.sale_price }}
-          </TData>
-          <TData type="normal">
-            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <router-link :to="{ path: 'edit-product/' + product.id }"
-                class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
-                <PencilIcon class="h-6 w-6" aria-hidden="true" />
-              </router-link>
-              <button @click="deleteProduct(product.id)"
-                class="font-medium text-red-600 dark:text-red-500 hover:underline">
-                <TrashIcon class="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-          </TData>
-        </tr>
-      </template>
-    </Table>
+      <Table>
+        <template #headColumns>
+          <THead label="Product Name" />
+          <THead label="Category" />
+          <THead label="Quantity" />
+          <THead label="Buy Price" />
+          <THead label="Sale Price" />
+          <THead label="Action" />
+        </template>
+
+        <template #tableRows>
+          <tr v-for="product in products" :key="product.id"
+            class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+            <TData type="first">
+              {{ product.name }}
+            </TData>
+            <TData type="normal">
+              {{ product.category }}
+            </TData>
+            <TData type="normal">
+              {{ product.quantity }}
+            </TData>
+            <TData type="normal">
+              {{ product.buy_price }}
+            </TData>
+            <TData type="normal">
+              {{ product.sale_price }}
+            </TData>
+            <TData type="normal">
+              <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <router-link :to="{ path: 'edit-product/' + product.id }"
+                  class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
+                  <PencilIcon class="h-6 w-6" aria-hidden="true" />
+                </router-link>
+                <button @click="deleteProduct(product.id)"
+                  class="font-medium text-red-600 dark:text-red-500 hover:underline">
+                  <TrashIcon class="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+            </TData>
+          </tr>
+        </template>
+      </Table>
+    </template>
   </div>
 </template>

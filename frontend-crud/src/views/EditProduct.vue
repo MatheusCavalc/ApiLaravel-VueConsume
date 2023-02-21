@@ -6,6 +6,7 @@ import { ref } from "vue";
 
 const route = useRoute()
 
+let url = process.env.VUE_APP_API_URL_BASE
 let id = route.params.id
 let name = ref('')
 let category = ref('')
@@ -14,7 +15,7 @@ let buy_price = ref('')
 let sale_price = ref('')
 
 const getProduct = () => {
-    axios.get('http://localhost/api/products/' + id).then((response) => {
+    axios.get(url + '/' + id).then((response) => {
         name.value = response.data['name']
         category.value = response.data['category']
         quantity.value = response.data['quantity']
