@@ -39,3 +39,18 @@ export function putData(id, parameters) {
         console.log(error)
     });
 }
+
+export function deleteData(id) {
+    axios.delete(url + '/' + id).then((response) => {
+        let message = response.data.message
+        if (message === 'Product deleted') {
+            router.push('/')
+        } else {
+            router.push('/')
+        }
+    }).catch(error => {
+        if (error.response.data.message == 'Unauthenticated.') {
+            router.push('/login')
+        }
+    });
+}
