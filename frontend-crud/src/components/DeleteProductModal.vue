@@ -21,7 +21,7 @@ const destroyProduct = () => {
 <template>
     <div class="fixed overflow-x-hidden overflow-y-auto inset-0 flex justify-center items-center z-50"
         v-show="props.modalActive">
-        <div class="relative mx-auto w-2/5">
+        <div class="relative lg:mx-auto lg:w-2/5 w-4/5">
             <div class="bg-white w-full rounded-md pt-8 pb-10 pl-9 pr-8">
                 <div class="flex justify-between">
                     <p class="text-2xl font-bold tracking-tight"></p>
@@ -32,7 +32,7 @@ const destroyProduct = () => {
                 <div class="mt-6">
                     <p class="text-2xl text-center font-bold tracking-tight">Delete Product?</p>
 
-                    <p class="mt-2">Deletion is not reversible, and the product will be completely deleted.</p>
+                    <p class="mt-2 text-center">Deletion is not reversible, and the product will be completely deleted.</p>
                 </div>
 
                 <div class="flex flex-row-reverse mt-10">
