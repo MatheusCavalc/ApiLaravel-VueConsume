@@ -1,12 +1,16 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
 import { postData } from '@/services/functions'
+import { ref } from 'vue';
 
 let name = ''
 let category = ''
 let quantity = ''
 let buy_price = ''
 let sale_price = ''
+
+const isButtonDisabled = ref('')
+isButtonDisabled.value = false
 
 const submit = () => {
     event.preventDefault()
@@ -21,6 +25,7 @@ const submit = () => {
     } else if (sale_price.trim() === '') {
         alert('Field Sale Price is Required')
     } else {
+        isButtonDisabled.value = true
         let parameters = {
             name: name.trim(),
             category: category.trim(),
@@ -89,8 +94,11 @@ const submit = () => {
                         </label>
                     </div>
                 </div>
-                <button type="submit"
-                    class="text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800">Submit</button>
+                <button type="submit" :disabled="isButtonDisabled"
+                    :class="[isButtonDisabled ? 
+                    'opacity-50 text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800' : 
+                    'text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800']"
+                    >Submit</button>
             </form>
         </div>
     </MainLayout>
