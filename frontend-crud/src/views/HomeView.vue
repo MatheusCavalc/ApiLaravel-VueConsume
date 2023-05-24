@@ -81,7 +81,7 @@ getProducts()
                 {{ product.sale_price }}
               </TData>
               <TData type="normal">
-                <div class="flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div class="flex pr-2 sm:static sm:inset-auto sm:pr-0">
                   <router-link :to="{ path: 'edit-product/' + product.id }"
                     class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
                     <PencilIcon class="h-6 w-6" aria-hidden="true" />
