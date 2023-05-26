@@ -41,8 +41,8 @@ getProducts()
         <LoadingSpinner />
       </template>
 
-      <template v-else>
-        <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-6">
+      <template v-else class="screen">
+        <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-12">
           Products
         </p>
 

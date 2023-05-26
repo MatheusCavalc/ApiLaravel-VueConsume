@@ -66,7 +66,7 @@ getProduct()
         </template>
 
         <template v-else>
-            <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-6">
+            <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-12">
                 Edit Product
             </p>
 

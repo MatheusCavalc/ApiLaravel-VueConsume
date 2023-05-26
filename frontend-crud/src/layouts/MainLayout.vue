@@ -1,21 +1,15 @@
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
-import axios from 'axios';
 import { defineProps } from 'vue';
+import { logout } from '@/services/functions'
 
 const props = defineProps(['currentPath'])
 
 let authUser = localStorage.getItem("bearerToken") === null ? false : true
 
-const logout = () => {
-  event.preventDefault()
-  axios.post('http://localhost/api/auth/logout').then((response) => {
-    localStorage.removeItem('bearerToken');
-    window.location.replace('/');
-  }).catch(error => {
-    console.log(error)
-  });
+const exit = () => {
+  logout()
 }
 
 const navigation = [
@@ -34,7 +28,7 @@ const navigation = [
 </script>
 
 <template>
-  <Disclosure as="nav" class="bg-gray-800" v-slot="{ open }">
+  <Disclosure as="nav" class="bg-gray-800 fixed w-full z-10 top-0" v-slot="{ open }">
     <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
       <div class="relative flex h-16 items-center justify-between">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -65,8 +59,7 @@ const navigation = [
         </div>
         <template v-if="authUser">
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button type="button"
-              class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+            <button type="button" class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
               <span class="sr-only">View notifications</span>
               <BellIcon class="h-6 w-6" aria-hidden="true" />
             </button>
@@ -74,8 +67,7 @@ const navigation = [
             <!-- Profile dropdown -->
             <Menu as="div" class="relative ml-3">
               <div>
-                <MenuButton
-                  class="flex rounded-full bg-gray-800 text-sm">
+                <MenuButton class="flex rounded-full bg-gray-800 text-sm">
                   <span class="sr-only">Open user menu</span>
                   <img class="h-8 w-8 rounded-full" src="https://avatars.githubusercontent.com/u/105112560?v=4"
                     alt="sexmaster" />
@@ -88,7 +80,7 @@ const navigation = [
                 <MenuItems
                   class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                   <MenuItem v-slot="{ active }">
-                  <a @click="logout" href=""
+                  <a @click="exit" href=""
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">Sign out</a>
                   </MenuItem>
                 </MenuItems>
@@ -99,12 +91,10 @@ const navigation = [
 
         <template v-else>
           <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <router-link to="/register"
-              class="rounded-full bg-gray-800 mr-3 p-1 text-gray-400 hover:text-white">
+            <router-link to="/register" class="rounded-full bg-gray-800 mr-3 p-1 text-gray-400 hover:text-white">
               Register
             </router-link>
-            <router-link to="/login"
-              class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
+            <router-link to="/login" class="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white">
               Login
             </router-link>
           </div>

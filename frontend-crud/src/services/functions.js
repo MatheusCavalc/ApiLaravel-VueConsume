@@ -3,6 +3,16 @@ import router from "@/router";
 
 let url = process.env.VUE_APP_API_URL_BASE
 
+export function logout() {
+    event.preventDefault()
+    axios.post('http://localhost/api/auth/logout').then((response) => {
+        localStorage.removeItem('bearerToken');
+        window.location.replace('/');
+    }).catch(error => {
+        console.log(error)
+    });
+}
+
 export function postData(parameters) {
     axios.post(url, parameters).then((response) => {
         let status = response.data[0]['status'];
