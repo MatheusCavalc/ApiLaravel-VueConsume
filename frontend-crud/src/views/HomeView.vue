@@ -1,22 +1,18 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
 import DeleteProductModal from '@/components/DeleteProductModal.vue';
-import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Table from '@/components/Table.vue'
-import THead from '@/components/THead.vue'
-import TData from '@/components/TData.vue'
 import axios from 'axios';
 import { ref } from 'vue';
 
 let products = ref('')
 let loadingPage = ref(true)
-let url = process.env.VUE_APP_API_URL_BASE
 let productId = ref('')
 let modalDeleteProduct = ref(false)
 let products_empty = ref('')
 
-const getProducts = () => {
+const getProducts = (url = 'http://localhost/api/products?page=1') => {
   axios.get(url)
     .then((response) => {
       products.value = response.data
@@ -52,50 +48,9 @@ getProducts()
           </p>
         </template>
 
-        <Table v-else>
-          <template #headColumns>
-            <THead label="Product Name" />
-            <THead label="Category" />
-            <THead label="Quantity" />
-            <THead label="Buy Price" />
-            <THead label="Sale Price" />
-            <THead label="Action" />
-          </template>
-
-          <template #tableRows>
-            <tr v-for="product in products" :key="product.id"
-              class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-              <TData type="first">
-                {{ product.name }}
-              </TData>
-              <TData type="normal">
-                {{ product.category }}
-              </TData>
-              <TData type="normal">
-                {{ product.quantity }}
-              </TData>
-              <TData type="normal">
-                {{ product.buy_price }}
-              </TData>
-              <TData type="normal">
-                {{ product.sale_price }}
-              </TData>
-              <TData type="normal">
-                <div class="flex pr-2 sm:static sm:inset-auto sm:pr-0">
-                  <router-link :to="{ path: 'edit-product/' + product.id }"
-                    class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
-                    <PencilIcon class="h-6 w-6" aria-hidden="true" />
-                  </router-link>
-                  <button @click="toggleModalDeleteProduct(product.id)"
-                    class="font-medium text-red-600 dark:text-red-500 hover:underline">
-                    <TrashIcon class="h-6 w-6" aria-hidden="true" />
-                  </button>
-                </div>
-              </TData>
-            </tr>
-          </template>
-        </Table>
+        <Table v-else :products="products" @change-page="getProducts" />
       </template>
+
       <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId"
         @close-modal="toggleModalDeleteProduct" @reload-page="getProducts" />
     </div>
