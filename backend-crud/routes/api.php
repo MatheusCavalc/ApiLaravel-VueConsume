@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('products', ProductController::class)
     ->only(['index']);
 
+Route::get('/products/livesearch/{search}', [ProductController::class, 'getProducts']);
+
 Route::apiResource('products', ProductController::class)
     ->only(['store','show', 'update', 'destroy'])
     ->middleware('auth:sanctum');

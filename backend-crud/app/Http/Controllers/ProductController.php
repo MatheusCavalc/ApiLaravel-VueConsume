@@ -19,6 +19,12 @@ class ProductController extends Controller
         return response()->json($products, 200);
     }
 
+    public function getProducts($search)
+    {
+        $products = Product::where('name', 'LIKE','%'.$search.'%')->paginate();
+        return response()->json($products);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
