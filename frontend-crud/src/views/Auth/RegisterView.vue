@@ -1,6 +1,6 @@
 <script setup>
-import axios from "axios";
 import { ref } from "vue";
+import { register } from "@/services/functions"
 
 const isButtonDisabled = ref('')
 isButtonDisabled.value = false
@@ -16,15 +16,7 @@ const submit = () => {
         alert('Repeat your password in two fields')
     } else {
         isButtonDisabled.value = true
-        axios.post('http://localhost/api/auth/register', {
-            name: name.trim(),
-            email: email.trim(),
-            password: password.trim()
-        }).then((response) => {
-            window.location.replace('/');
-        }).catch(error => {
-            console.log(error)
-        });
+        register(name, email, password)
     }
 }
 </script>

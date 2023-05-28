@@ -1,7 +1,6 @@
 <script setup>
-import axios from "axios";
-import setAuthHeader from "@/services/setAuthHeader.js"
 import { ref } from "vue";
+import { login } from "@/services/functions"
 
 const isButtonDisabled = ref('')
 isButtonDisabled.value = false
@@ -11,17 +10,7 @@ let password = ''
 
 const submit = () => {
     isButtonDisabled.value = true
-    event.preventDefault()
-    axios.post('http://localhost/api/auth/login', {
-        email: email.trim(),
-        password: password.trim()
-    }).then((response) => {
-        localStorage.setItem('bearerToken', response.data.data.token)
-        setAuthHeader(response.data.data.token)
-        window.location.replace('/');
-    }).catch(error => {
-        console.log(error)
-    });
+    login(email.trim(), password.trim())
 }
 </script>
 

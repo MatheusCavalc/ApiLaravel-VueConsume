@@ -98,14 +98,14 @@ const changePage = (url) => {
                             </button>
                         </template>
 
-                        <a @click="changePage(products.next_page_url)"
+                        <button @click="changePage(products.next_page_url)"
                             class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
                             <span class="sr-only">Next</span>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
-                        </a>
+                        </button>
                     </nav>
                 </div>
             </div>

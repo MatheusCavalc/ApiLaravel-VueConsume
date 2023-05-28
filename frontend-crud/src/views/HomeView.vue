@@ -5,6 +5,11 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Table from '@/components/Table.vue'
 import axios from 'axios';
 import { ref } from 'vue';
+//import { test } from '@/services/functions'
+
+//let oioo = test()
+
+//console.log(oioo)
 
 let products = ref('')
 let search = ref('')
