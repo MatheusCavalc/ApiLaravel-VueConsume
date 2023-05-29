@@ -2,83 +2,127 @@
 import MainLayout from '@/layouts/MainLayout.vue';
 import DeleteProductModal from '@/components/DeleteProductModal.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import Table from '@/components/Table.vue'
+import THead from '@/components/THead.vue'
+import TData from '@/components/TData.vue'
+import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { ref } from 'vue';
-//import { test } from '@/services/functions'
 
-//let oioo = test()
-
-//console.log(oioo)
-
-let products = ref('')
-let search = ref('')
-let loadingPage = ref(true)
-let productId = ref('')
+const products = ref([]);
+const currentPage = ref(1);
+const loading = ref(false);
 let modalDeleteProduct = ref(false)
-let products_empty = ref('')
+let productId = ref('')
+let loadingPage = ref(true)
 
-const getProducts = (url = 'http://localhost/api/products?page=1') => {
-  axios.get(url)
-    .then((response) => {
-      products.value = response.data
-      loadingPage.value = false
-      products.value.data.length == 0 ? products_empty.value = true : products_empty.value = false
-    })
-}
+const loadProducts = async () => {
+  try {
+    loading.value = true;
+    const response = await axios.get('http://localhost/api/products?page=1', {
+      params: {
+        perPage: 10,
+        page: currentPage.value,
+      },
+    });
+    products.value = [...products.value, ...response.data.data];
+    loadingPage.value = false
 
-const getProductsSearch = () => {
-  if (search.value != '') {
-    axios.get('http://localhost/api/products/livesearch/' + search.value)
-    .then((response) => {
-      products.value = response.data
-      loadingPage.value = false
-      products.value.data.length == 0 ? products_empty.value = true : products_empty.value = false
-    })
-  } else {
-    getProducts()
+    currentPage.value++;
+    loading.value = false;
+  } catch (error) {
+    console.error(error);
   }
-  
-}
+};
+
+onMounted(() => {
+  loadProducts();
+  window.addEventListener('scroll', () => {
+    if (
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight
+    ) {
+      loadProducts();
+    }
+  });
+});
 
 const toggleModalDeleteProduct = (id) => {
   productId.value = id
   modalDeleteProduct.value = !modalDeleteProduct.value
 }
-
-getProducts()
 </script>
 
 <template>
   <MainLayout currentPath="/">
-    <div class="home">
 
-      <template v-if="loadingPage">
-        <LoadingSpinner />
-      </template>
+    <template v-if="loadingPage">
+      <LoadingSpinner />
+    </template>
 
-      <template v-else>
-        <div class="flex justify-between">
-          <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-12">
-            Products
-          </p>
+    <template v-else>
+      <div class="my-10">
+        <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-20">
+          Products
+        </p>
 
-          <input type="search" id="default-search" v-model="search" @keyup="getProductsSearch"
-            class="block mt-12 h-11 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
-            placeholder="Search Products">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <THead label="Product Name" />
+                <THead label="Category" />
+                <THead label="Quantity" />
+                <THead label="Buy Price" />
+                <THead label="Sale Price" />
+                <THead label="Action" />
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="product in products" :key="product.id"
+                class="bg-white my-20 border-b dark:bg-gray-900 dark:border-gray-700">
+                <TData type="first">
+                  {{ product.name }} ///// {{ product.id }}
+                </TData>
+                <TData type="normal">
+                  {{ product.category }}
+                </TData>
+                <TData type="normal">
+                  {{ product.quantity }}
+                </TData>
+                <TData type="normal">
+                  {{ product.buy_price }}
+                </TData>
+                <TData type="normal">
+                  {{ product.sale_price }}
+                </TData>
+                <TData type="normal">
+                  <div class="flex pr-2 sm:static sm:inset-auto sm:pr-0">
+                    <router-link :to="{ path: 'edit-product/' + product.id }"
+                      class="font-medium mr-3 text-blue-600 dark:text-blue-500 hover:underline">
+                      <PencilIcon class="h-6 w-6" aria-hidden="true" />
+                    </router-link>
+                    <button @click="toggleModalDeleteProduct(product.id)"
+                      class="font-medium text-red-600 dark:text-red-500 hover:underline">
+                      <TrashIcon class="h-6 w-6" aria-hidden="true" />
+                    </button>
+                  </div>
+                </TData>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <template v-if="products_empty">
-          <p class="text-very-dark mb-4 font-bold text-2xl lg:text-2xl ml-8 mt-10">
-            No Products
-          </p>
-        </template>
+        <div v-if="loading">
+          <LoadingSpinner />
+        </div>
 
-        <Table v-else :products="products" @change-page="getProducts" />
-      </template>
+      </div>
+    </template>
 
-      <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId"
-        @close-modal="toggleModalDeleteProduct" @reload-page="getProducts" />
-    </div>
+    <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId" @close-modal="toggleModalDeleteProduct"
+      @reload-page="loadProducts" />
+
   </MainLayout>
 </template>
+  
