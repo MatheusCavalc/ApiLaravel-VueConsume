@@ -1,21 +1,13 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
-import DeleteProductModal from '@/components/DeleteProductModal.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Table from '@/components/Table.vue'
 import axios from 'axios';
 import { ref } from 'vue';
-//import { test } from '@/services/functions'
-
-//let oioo = test()
-
-//console.log(oioo)
 
 let products = ref('')
 let search = ref('')
 let loadingPage = ref(true)
-let productId = ref('')
-let modalDeleteProduct = ref(false)
 let products_empty = ref('')
 
 const getProducts = (url = 'http://localhost/api/products?page=1') => {
@@ -39,11 +31,6 @@ const getProductsSearch = () => {
     getProducts()
   }
   
-}
-
-const toggleModalDeleteProduct = (id) => {
-  productId.value = id
-  modalDeleteProduct.value = !modalDeleteProduct.value
 }
 
 getProducts()
@@ -74,11 +61,8 @@ getProducts()
           </p>
         </template>
 
-        <Table v-else :products="products" @change-page="getProducts" />
+        <Table v-else :products="products" @change-page="getProducts" @reload-products="getProducts"/>
       </template>
-
-      <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId"
-        @close-modal="toggleModalDeleteProduct" @reload-page="getProducts" />
     </div>
   </MainLayout>
 </template>

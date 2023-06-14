@@ -9,8 +9,7 @@ let quantity = ''
 let buy_price = ''
 let sale_price = ''
 
-const isButtonDisabled = ref('')
-isButtonDisabled.value = false
+const isButtonDisabled = ref(false)
 
 const submit = () => {
     event.preventDefault()
@@ -34,6 +33,7 @@ const submit = () => {
             sale_price: sale_price.trim()
         }
         postData(parameters)
+        isButtonDisabled.value = false
     }
 }
 

@@ -13,7 +13,7 @@ class LoginController extends Controller
 
         if (!auth()->attempt($credentials)) abort(401, 'Invalid Credentials');
 
-        $token = auth()->user()->createToken('auth_token');
+        $token = auth()->user()->createToken('auth_token', ['product-store','product-update', 'product-destroy']);
 
         return response()->json([
             'data' => [

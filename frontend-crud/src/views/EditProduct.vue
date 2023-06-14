@@ -17,8 +17,7 @@ let quantity = ref('')
 let buy_price = ref('')
 let sale_price = ref('')
 
-const isButtonDisabled = ref('')
-isButtonDisabled.value = false
+const isButtonDisabled = ref(false)
 
 const getProduct = () => {
     axios.get(url + '/' + id).then((response) => {
@@ -53,6 +52,7 @@ const submit = () => {
             sale_price: sale_price.value
         }
         putData(id, parameters)
+        isButtonDisabled.value = false
     }
 }
 

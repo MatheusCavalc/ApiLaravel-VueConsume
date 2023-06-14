@@ -1,14 +1,26 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import DeleteProductModal from '@/components/DeleteProductModal.vue';
+import { defineProps, defineEmits, ref } from 'vue';
 import { PencilIcon, TrashIcon } from '@heroicons/vue/24/outline'
 import THead from '@/components/THead.vue'
 import TData from '@/components/TData.vue'
 
 const props = defineProps(['products'])
-const emit = defineEmits(['changePage'])
+const emit = defineEmits(['changePage', 'reloadProducts'])
+let modalDeleteProduct = ref(false)
+let productId = ref('')
 
 const changePage = (url) => {
     emit('changePage', url)
+}
+
+const getProducts = () => {
+    emit('reloadProducts')
+}
+
+const toggleModalDeleteProduct = (id) => {
+  productId.value = id
+  modalDeleteProduct.value = !modalDeleteProduct.value
 }
 </script>
 
@@ -111,4 +123,7 @@ const changePage = (url) => {
             </div>
         </div>
     </div>
+
+    <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId"
+        @close-modal="toggleModalDeleteProduct" @reload-page="getProducts" />
 </template>

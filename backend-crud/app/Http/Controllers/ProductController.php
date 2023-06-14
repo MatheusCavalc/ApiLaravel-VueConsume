@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +24,7 @@ class ProductController extends Controller
 
     public function getProducts($search)
     {
-        $products = Product::where('name', 'LIKE','%'.$search.'%')->paginate();
+        $products = Product::where('name', 'LIKE', '%' . $search . '%')->paginate();
         return response()->json($products);
     }
 
@@ -42,15 +45,23 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $response = [];
-        $validation = $this->validation($request->all());
-        if (!is_array($validation)) {
-            Product::create($request->all());
-            array_push($response, ['status' => 'success']);
-            return response()->json($response, 200);
-        } else {
-            return response()->json($validation, 400);
-        }
+        if (!auth()->user()->tokenCan('product-store')) abort(401, 'Invalid Credentials');
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:80',
+            'category' => 'required|max:150',
+            'quantity' => 'required|numeric|max:999999',
+            'buy_price' => 'required|max:15',
+            'sale_price' => 'required|max:15',
+        ]);
+
+        if($validator->fails()) return $this->error('Data Invalid', 422, $validator->errors());
+
+        $created = Product::create($validator->validated());
+
+        if($created) return $this->response('Product Created', 200, $created);
+
+        return $this->error('Something Error', 400);
     }
 
     /**
@@ -88,23 +99,33 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        $response = [];
-        $validation = $this->validation($request->all());
-        if (!is_array($validation)) {
-            $product = Product::find($id);
-            if ($product) {
-                $product->fill($request->all())->save();
-                array_push($response, ['status' => 'success']);
-            } else {
-                array_push($response, ['status' => 'error']);
-                array_push($response, ['errors' => ['id' => ['Products not found']]]);
-            }
-            return response()->json($response);
-        } else {
-            return response()->json($validation);
-        }
+        if (!auth()->user()->tokenCan('product-update')) abort(401, 'Invalid Credentials');
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:80',
+            'category' => 'required|max:150',
+            'quantity' => 'required|numeric|max:999999',
+            'buy_price' => 'required|max:15',
+            'sale_price' => 'required|max:15',
+        ]);
+
+        if($validator->fails()) return $this->error('Validation Failed', 422, $validator->errors());
+
+        $validated = $validator->validated();
+
+        $updated = $product->update([
+            'name' => $validated['name'],
+            'category' => $validated['category'],
+            'quantity' => $validated['quantity'],
+            'buy_price' => $validated['buy_price'],
+            'sale_price' => $validated['sale_price'],
+        ]);
+
+        if($updated) return $this->response('Product Updated', 200, $product);
+
+        return $this->error('Something Error', 400);
     }
 
     /**
@@ -113,54 +134,14 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        if (Product::where('id', $id)->exists()) {
-            $product = Product::find($id);
-            $product->delete();
-            return response()->json([
-                "message" => "Product deleted"
-            ], 202);
-        } else {
-            return response()->json([
-                "message" => "Product not found"
-            ], 404);
-        }
-    }
-    public function validation($params)
-    {
-        $response = [];
-        $messages = [
-            'max' => 'The :attribute field must NOT have more than :max characters',
-            'required' => 'The :attribute field must NOT be empty',
-            'quantity.numeric' => ':attribute must be numeric'
-        ];
-        $attributes = [
-            'name' => 'name',
-            'category' => 'category',
-            'quantity' => 'quantity',
-            'buy_price' => 'buy_price',
-            'sale_price' => 'sale_price'
-        ];
-        $validation = Validator::make(
-            $params,
-            [
-                'name' => 'required|max:80',
-                'category' => 'required|max:150',
-                'quantity' => 'required|numeric|max:999999',
-                'buy_price' => 'required|max:15',
-                'sale_price' => 'required|max:15',
-            ],
-            $messages,
-            $attributes
-        );
+        if (!auth()->user()->tokenCan('product-destroy')) abort(401, 'Invalid Credentials');
 
-        if ($validation->fails()) {
-            array_push($response, ['status' => 'error']);
-            array_push($response, ['errors' => $validation->errors()]);
-            return $response;
-        } else {
-            return true;
-        }
+        $deleted = $product->delete();
+
+        if ($deleted) return $this->response('Product Deleted', 200);
+
+        return $this->error('Something Error', 400);
     }
 }

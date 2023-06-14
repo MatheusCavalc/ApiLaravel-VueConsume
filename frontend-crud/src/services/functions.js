@@ -43,48 +43,48 @@ export function logout() {
 
 export function postData(parameters) {
     axios.post(url, parameters).then((response) => {
-        let status = response.data[0]['status'];
-        if (status === 'success') {
+        if (response.data.message === 'Product Created') {
             router.push('/')
-        } else if (status === 'error') {
-            let list = '';
-            let errors = response.data[1]['errors'];
-            Object.keys(errors).forEach(
-                key => list += errors[key][0] + '.'
-            );
-            console.log(list)
-            //alert(list, 'error');
+        } else if (response.data.message === 'Something Error') {
+            alert('Please Rewrite the Product');
         }
     }).catch(error => {
-        console.log(error)
+        if (error.response.data.message == 'Data Invalid') {
+            let list = '';
+            let errors = error.response.data.errors
+            Object.keys(errors).forEach(
+                key => list += errors[key][0] + '\n'
+            );
+            alert(list, 'error');
+        }
     });
 }
 
 export function putData(id, parameters) {
     axios.put(url + '/' + id, parameters).then((response) => {
-        let status = response.data[0]['status'];
-        if (status === 'success') {
+        if (response.data.message === 'Product Updated') {
             router.push('/')
-        } else {
+        } else if (response.data.message === 'Something Error') {
+            alert('Please Rewrite the Product');
+        }
+    }).catch(error => {
+        if (error.response.data.message == 'Validation Failed') {
             let list = '';
-            let errors = response.data[1]['errors'];
+            let errors = error.response.data.errors
             Object.keys(errors).forEach(
-                key => list += errors[key][0] + '.'
+                key => list += errors[key][0] + '\n'
             );
             alert(list, 'error');
         }
-    }).catch(error => {
-        console.log(error)
     });
 }
 
 export function deleteData(id) {
     axios.delete(url + '/' + id).then((response) => {
-        let message = response.data.message
-        if (message === 'Product deleted') {
+        if (response.data.message === 'Product Deleted') {
             router.push('/')
-        } else {
-            router.push('/')
+        } else if (response.data.message === 'Something Error') {
+            alert('Please Redelete the Product');
         }
     }).catch(error => {
         if (error.response.data.message == 'Unauthenticated.') {
@@ -92,9 +92,3 @@ export function deleteData(id) {
         }
     });
 }
-
-//export function test() {
-//    let oi = 'oi'
-//    let hey = 'hey'
-//    return { oi, hey }
-//}
