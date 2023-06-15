@@ -55,11 +55,11 @@ class ProductController extends Controller
             'sale_price' => 'required|max:15',
         ]);
 
-        if($validator->fails()) return $this->error('Data Invalid', 422, $validator->errors());
+        if ($validator->fails()) return $this->error('Data Invalid', 422, $validator->errors());
 
         $created = Product::create($validator->validated());
 
-        if($created) return $this->response('Product Created', 200, $created);
+        if ($created) return $this->response('Product Created', 200, $created);
 
         return $this->error('Something Error', 400);
     }
@@ -70,16 +70,11 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        if (Product::where('id', $id)->exists()) {
-            $product = Product::find($id);
-            return response()->json($product, 200);
-        } else {
-            return response()->json([
-                "message" => "Product not found"
-            ], 404);
-        }
+        if ($product) return $this->response('Product', 200, $product);
+
+        return $this->error('Something Error', 400);
     }
 
     /**
@@ -111,7 +106,7 @@ class ProductController extends Controller
             'sale_price' => 'required|max:15',
         ]);
 
-        if($validator->fails()) return $this->error('Validation Failed', 422, $validator->errors());
+        if ($validator->fails()) return $this->error('Validation Failed', 422, $validator->errors());
 
         $validated = $validator->validated();
 
@@ -123,7 +118,7 @@ class ProductController extends Controller
             'sale_price' => $validated['sale_price'],
         ]);
 
-        if($updated) return $this->response('Product Updated', 200, $product);
+        if ($updated) return $this->response('Product Updated', 200, $product);
 
         return $this->error('Something Error', 400);
     }

@@ -19,8 +19,8 @@ const getProducts = () => {
 }
 
 const toggleModalDeleteProduct = (id) => {
-  productId.value = id
-  modalDeleteProduct.value = !modalDeleteProduct.value
+    productId.value = id
+    modalDeleteProduct.value = !modalDeleteProduct.value
 }
 </script>
 
@@ -42,7 +42,9 @@ const toggleModalDeleteProduct = (id) => {
                 <tr v-for="product in products.data" :key="product.id"
                     class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
                     <TData type="first">
-                        {{ product.name }}
+                        <router-link :to="{ path: 'show-product/' + product.id }">
+                            {{ product.name }}
+                        </router-link>
                     </TData>
                     <TData type="normal">
                         {{ product.category }}
@@ -124,6 +126,6 @@ const toggleModalDeleteProduct = (id) => {
         </div>
     </div>
 
-    <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId"
-        @close-modal="toggleModalDeleteProduct" @reload-page="getProducts" />
+    <DeleteProductModal :modalActive="modalDeleteProduct" :product_id="productId" @close-modal="toggleModalDeleteProduct"
+        @reload-page="getProducts" />
 </template>

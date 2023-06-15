@@ -21,11 +21,11 @@ const isButtonDisabled = ref(false)
 
 const getProduct = () => {
     axios.get(url + '/' + id).then((response) => {
-        name.value = response.data['name']
-        category.value = response.data['category']
-        quantity.value = response.data['quantity']
-        buy_price.value = response.data['buy_price']
-        sale_price.value = response.data['sale_price']
+        name.value = response.data.data.name
+        category.value = response.data.data.category
+        quantity.value = response.data.data.quantity
+        buy_price.value = response.data.data.buy_price
+        sale_price.value = response.data.data.sale_price
         loadingPage.value = false
     })
 }
