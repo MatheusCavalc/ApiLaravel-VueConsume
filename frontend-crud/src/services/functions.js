@@ -41,6 +41,7 @@ export function logout() {
     });
 }
 
+/*
 export function postData(parameters) {
     axios.post(url, parameters).then((response) => {
         if (response.data.message === 'Product Created') {
@@ -59,7 +60,8 @@ export function postData(parameters) {
         }
     });
 }
-
+*/
+/*
 export function putData(id, parameters) {
     axios.put(url + '/' + id, parameters).then((response) => {
         if (response.data.message === 'Product Updated') {
@@ -78,6 +80,7 @@ export function putData(id, parameters) {
         }
     });
 }
+*/
 
 export function deleteData(id) {
     axios.delete(url + '/' + id).then((response) => {

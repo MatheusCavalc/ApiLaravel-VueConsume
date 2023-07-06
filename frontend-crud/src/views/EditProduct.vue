@@ -1,8 +1,8 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import { putData } from '@/services/functions'
 import { useRoute } from 'vue-router';
+import router from '@/router';
 import axios from "axios";
 import { ref } from "vue";
 
@@ -18,6 +18,7 @@ let buy_price = ref('')
 let sale_price = ref('')
 
 const isButtonDisabled = ref(false)
+const errors = ref([])
 
 const getProduct = () => {
     axios.get(url + '/' + id).then((response) => {
@@ -32,28 +33,26 @@ const getProduct = () => {
 
 const submit = () => {
     event.preventDefault()
-    if (name === '') {
-        alert('Field Name is Required')
-    } else if (category === '') {
-        alert('Field category is Required')
-    } else if (quantity === '') {
-        alert('Field quantity is Required')
-    } else if (buy_price === '') {
-        alert('Field Buy Price is Required')
-    } else if (sale_price === '') {
-        alert('Field Sale Price is Required')
-    } else {
-        isButtonDisabled.value = true
-        let parameters = {
-            name: name.value,
-            category: category.value,
-            quantity: quantity.value,
-            buy_price: buy_price.value,
-            sale_price: sale_price.value
-        }
-        putData(id, parameters)
-        isButtonDisabled.value = false
+    isButtonDisabled.value = true
+    let parameters = {
+        name: name.value,
+        category: category.value,
+        quantity: quantity.value,
+        buy_price: buy_price.value,
+        sale_price: sale_price.value
     }
+    axios.put(url + '/' + id, parameters).then((response) => {
+        if (response.data.message === 'Product Updated') {
+            router.push('/')
+        } else if (response.data.message === 'Something Error') {
+            alert('Please Rewrite the Product');
+        }
+    }).catch(error => {
+        if (error.response.data.message == 'Validation Failed') {
+            errors.value = error.response.data.errors
+        }
+    });
+    isButtonDisabled.value = false
 }
 
 getProduct()
@@ -80,6 +79,10 @@ getProduct()
                             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                             Product Name
                         </label>
+
+                        <div v-if="errors.name">
+                            <p class="text-sm text-red-500">{{ errors.name[0] }}</p>
+                        </div>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <input type="text" v-model="category" id="floating_password"
@@ -89,6 +92,10 @@ getProduct()
                             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                             Category
                         </label>
+
+                        <div v-if="errors.category">
+                            <p class="text-sm text-red-500">{{ errors.category[0] }}</p>
+                        </div>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <input type="text" v-model="quantity" id="floating_repeat_password"
@@ -98,6 +105,10 @@ getProduct()
                             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                             Quantity
                         </label>
+
+                        <div v-if="errors.quantity">
+                            <p class="text-sm text-red-500">{{ errors.quantity[0] }}</p>
+                        </div>
                     </div>
                     <div class="grid md:grid-cols-2 md:gap-6">
                         <div class="relative z-0 w-full mb-6 group">
@@ -108,6 +119,10 @@ getProduct()
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                 Buy Price
                             </label>
+
+                            <div v-if="errors.buy_price">
+                                <p class="text-sm text-red-500">{{ errors.buy_price[0] }}</p>
+                            </div>
                         </div>
                         <div class="relative z-0 w-full mb-6 group">
                             <input type="text" v-model="sale_price" id="floating_last_name"
@@ -117,6 +132,10 @@ getProduct()
                                 class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                 Sale Price
                             </label>
+
+                            <div v-if="errors.sale_price">
+                                <p class="text-sm text-red-500">{{ errors.sale_price[0] }}</p>
+                            </div>
                         </div>
                     </div>
                     <button type="submit" :disabled="isButtonDisabled"

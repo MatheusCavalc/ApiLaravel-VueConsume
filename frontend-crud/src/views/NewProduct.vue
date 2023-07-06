@@ -1,6 +1,7 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
-import { postData } from '@/services/functions'
+import router from '@/router';
+import axios from 'axios';
 import { ref } from 'vue';
 
 let name = ''
@@ -10,31 +11,30 @@ let buy_price = ''
 let sale_price = ''
 
 const isButtonDisabled = ref(false)
+const errors = ref([])
 
 const submit = () => {
     event.preventDefault()
-    if (name.trim() === '') {
-        alert('Field Name is Required')
-    } else if (category.trim() === '') {
-        alert('Field Category is Required')
-    } else if (quantity.trim() === '') {
-        alert('Field Quantity is Required')
-    } else if (buy_price.trim() === '') {
-        alert('Field Buy Price is Required')
-    } else if (sale_price.trim() === '') {
-        alert('Field Sale Price is Required')
-    } else {
-        isButtonDisabled.value = true
-        let parameters = {
-            name: name.trim(),
-            category: category.trim(),
-            quantity: quantity.trim(),
-            buy_price: buy_price.trim(),
-            sale_price: sale_price.trim()
-        }
-        postData(parameters)
-        isButtonDisabled.value = false
+    isButtonDisabled.value = true
+    let parameters = {
+        name: name.trim(),
+        category: category.trim(),
+        quantity: quantity.trim(),
+        buy_price: buy_price.trim(),
+        sale_price: sale_price.trim()
     }
+    axios.post('http://localhost/api/products', parameters).then((response) => {
+        if (response.data.message === 'Product Created') {
+            router.push('/')
+        } else if (response.data.message === 'Something Error') {
+            alert('Please Rewrite the Product');
+        }
+    }).catch(error => {
+        if (error.response.data.message == 'Data Invalid') {
+            errors.value = error.response.data.errors
+        }
+    });
+    isButtonDisabled.value = false
 }
 
 </script>
@@ -55,6 +55,10 @@ const submit = () => {
                         class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                         Product Name
                     </label>
+
+                    <div v-if="errors.name">
+                        <p class="text-sm text-red-500">{{ errors.name[0] }}</p>
+                    </div>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
                     <input type="text" v-model="category" id="floating_password"
@@ -64,6 +68,10 @@ const submit = () => {
                         class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                         Category
                     </label>
+
+                    <div v-if="errors.category">
+                        <p class="text-sm text-red-500">{{ errors.category[0] }}</p>
+                    </div>
                 </div>
                 <div class="relative z-0 w-full mb-6 group">
                     <input type="text" v-model="quantity" id="floating_repeat_password"
@@ -73,6 +81,10 @@ const submit = () => {
                         class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                         Quantity
                     </label>
+
+                    <div v-if="errors.quantity">
+                        <p class="text-sm text-red-500">{{ errors.quantity[0] }}</p>
+                    </div>
                 </div>
                 <div class="grid md:grid-cols-2 md:gap-6">
                     <div class="relative z-0 w-full mb-6 group">
@@ -83,6 +95,10 @@ const submit = () => {
                             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                             Buy Price
                         </label>
+
+                        <div v-if="errors.buy_price">
+                            <p class="text-sm text-red-500">{{ errors.buy_price[0] }}</p>
+                        </div>
                     </div>
                     <div class="relative z-0 w-full mb-6 group">
                         <input type="text" v-model="sale_price" id="floating_last_name"
@@ -92,13 +108,16 @@ const submit = () => {
                             class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                             Sale Price
                         </label>
+
+                        <div v-if="errors.sale_price">
+                            <p class="text-sm text-red-500">{{ errors.sale_price[0] }}</p>
+                        </div>
                     </div>
                 </div>
                 <button type="submit" :disabled="isButtonDisabled"
-                    :class="[isButtonDisabled ? 
-                    'opacity-50 text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800' : 
-                    'text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800']"
-                    >Submit</button>
+                    :class="[isButtonDisabled ?
+                        'opacity-50 text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800' :
+                        'text-white bg-blue-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-900 dark:hover:bg-blue-800 dark:focus:ring-blue-800']">Submit</button>
             </form>
         </div>
     </MainLayout>
