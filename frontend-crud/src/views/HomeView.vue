@@ -46,12 +46,12 @@ getProducts()
 
       <template v-else>
         <div class="flex justify-between">
-          <p class="text-very-dark mb-4 font-bold text-3xl lg:text-4xl ml-4 mt-12">
+          <p class="text-very-dark mb-4 font-bold text-xl lg:text-4xl ml-4 mt-12">
             Products
           </p>
 
           <input type="search" id="default-search" v-model="search" @keyup="getProductsSearch"
-            class="block mt-12 h-11 p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+            class="block mr-2 lg:mr-0 mt-12 h-4 lg:h-11 p-4 lg:pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
             placeholder="Search Products">
         </div>
 

@@ -1,16 +1,30 @@
 <script setup>
 import { ref } from "vue";
-import { login } from "@/services/functions"
+import setAuthHeader from "@/services/setAuthHeader";
+import axios from "axios";
 
-const isButtonDisabled = ref('')
-isButtonDisabled.value = false
+const isButtonDisabled = ref(false)
+const errors = ref('')
 
 let email = ''
 let password = ''
 
 const submit = () => {
     isButtonDisabled.value = true
-    login(email.trim(), password.trim())
+    event.preventDefault()
+    axios.post('http://localhost/api/auth/login', {
+        email: email.trim(),
+        password: password.trim()
+    }).then((response) => {
+        localStorage.setItem('bearerToken', response.data.data.token)
+        setAuthHeader(response.data.data.token)
+        window.location.replace('/');
+    }).catch(error => {
+        if (error.response.data.message == 'Invalid Credentials') {
+            errors.value = error.response.data.message
+            isButtonDisabled.value = false
+        }
+    });
 }
 </script>
 
@@ -34,6 +48,9 @@ const submit = () => {
                             <input type="email" v-model="email" id="email"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="name@company.com" required="">
+                            <div v-if="errors">
+                                <p class="text-sm text-red-500">{{ errors }}</p>
+                            </div>
                         </div>
                         <div>
                             <label for="password"
@@ -41,6 +58,9 @@ const submit = () => {
                             <input type="password" v-model="password" id="password" placeholder="••••••••"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 required="">
+                            <div v-if="errors">
+                                <p class="text-sm text-red-500">{{ errors }}</p>
+                            </div>
                         </div>
                         <button type="submit" :disabled="isButtonDisabled"
                             :class="[isButtonDisabled ?

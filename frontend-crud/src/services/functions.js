@@ -1,9 +1,9 @@
 import axios from 'axios'
 import router from "@/router";
-import setAuthHeader from "@/services/setAuthHeader"
 
 let url = process.env.VUE_APP_API_URL_BASE
 
+/*
 export function register(name, email, password) {
     event.preventDefault()
     axios.post('http://localhost/api/auth/register', {
@@ -16,7 +16,9 @@ export function register(name, email, password) {
         console.log(error)
     });
 }
+*/
 
+/*
 export function login(email, password) {
     event.preventDefault()
     axios.post('http://localhost/api/auth/login', {
@@ -30,6 +32,8 @@ export function login(email, password) {
         console.log(error)
     });
 }
+*/
+
 
 export function logout() {
     event.preventDefault()
@@ -61,6 +65,7 @@ export function postData(parameters) {
     });
 }
 */
+
 /*
 export function putData(id, parameters) {
     axios.put(url + '/' + id, parameters).then((response) => {
