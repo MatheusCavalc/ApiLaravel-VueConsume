@@ -3,7 +3,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useRoute } from 'vue-router';
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const route = useRoute()
 
@@ -26,7 +26,9 @@ const getProduct = () => {
     })
 }
 
-getProduct()
+onMounted(() => {
+  getProduct()
+});
 </script>
 
 <template>

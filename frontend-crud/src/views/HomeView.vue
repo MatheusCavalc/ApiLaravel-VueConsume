@@ -3,7 +3,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Table from '@/components/Table.vue'
 import axios from 'axios';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 let products = ref('')
 let search = ref('')
@@ -22,18 +22,20 @@ const getProducts = (url = 'http://localhost/api/products?page=1') => {
 const getProductsSearch = () => {
   if (search.value != '') {
     axios.get('http://localhost/api/products/livesearch/' + search.value)
-    .then((response) => {
-      products.value = response.data
-      loadingPage.value = false
-      products.value.data.length == 0 ? products_empty.value = true : products_empty.value = false
-    })
+      .then((response) => {
+        products.value = response.data
+        loadingPage.value = false
+        products.value.data.length == 0 ? products_empty.value = true : products_empty.value = false
+      })
   } else {
     getProducts()
   }
-  
+
 }
 
-getProducts()
+onMounted(() => {
+  getProducts()
+});
 </script>
 
 <template>
@@ -61,7 +63,7 @@ getProducts()
           </p>
         </template>
 
-        <Table v-else :products="products" @change-page="getProducts" @reload-products="getProducts"/>
+        <Table v-else :products="products" @change-page="getProducts" @reload-products="getProducts" />
       </template>
     </div>
   </MainLayout>

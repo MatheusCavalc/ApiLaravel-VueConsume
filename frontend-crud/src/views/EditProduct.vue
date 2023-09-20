@@ -4,7 +4,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { useRoute } from 'vue-router';
 import router from '@/router';
 import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const route = useRoute()
 
@@ -55,7 +55,9 @@ const submit = () => {
     isButtonDisabled.value = false
 }
 
-getProduct()
+onMounted(() => {
+  getProduct()
+});
 </script>
 
 <template>
