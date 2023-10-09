@@ -1,6 +1,6 @@
 # Instalando o projeto
 
-O projeto se utiliza de PHP 8.0, portanto, é necessário que ele esteja instalado na máquina.
+O projeto se utiliza de contêineres Docker, através do pacote Laravel Sail para facilitar a configuração do ambiente de desenvolvimento. Portanto, é necessário que já possua o Docker e o Docker Compose instalados na máquina.
 
 ### Passos para o rodar o projeto localmente:
 
@@ -16,7 +16,7 @@ cd frontend
 ```shell
 npm install
 ```
-- Copie o arquivo .env.example, renomeie para .env e preencha com a rota base do backend que sera http://localhost/api/products:
+- Copie o arquivo .env.example, renomeie para .env e preencha com a rota base do backend que será http://localhost/api/products:
 ```shell
 cp .env.example .env
 ```
@@ -24,7 +24,7 @@ cp .env.example .env
 ```shell
 npm run serve
 ```
-- Volte para a raiz do projeto e va para a pasta backend:
+- Volte para a raiz do projeto e vá para a pasta backend:
 ```shell
 cd ..
 ```
@@ -47,9 +47,9 @@ php artisan key:generate
 ```shell
 ./vendor/bin/sail up -d
 ```
-- Execute o comando abaixo para popular o banco de dados com as tabelas necessarias para a aplicacao:
+- Execute o comando abaixo para popular o banco de dados com as tabelas necessárias para a aplicação:
 ```shell
 ./vendor/bin/sail artisan migrate
 ```
 
-Depois que os comandos acima forem executados, você poderá acessar a aplicacao em http://localhost:8080
+Depois que os comandos acima forem executados, você poderá acessar a aplicação em http://localhost:8080
